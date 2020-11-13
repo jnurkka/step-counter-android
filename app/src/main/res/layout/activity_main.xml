@@ -6,21 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.jjoe64.graphview.GraphView
-        android:layout_width = "match_parent"
-        android:layout_height = "200dip"
-        android:id = "@+id/graph" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
 
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph"
+            android:layout_width="match_parent"
+            android:layout_height="200dip" />
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
+            android:layout_height="117dp"
+            android:text="0"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="36sp" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="Reset" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
