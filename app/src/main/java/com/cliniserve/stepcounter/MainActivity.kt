@@ -13,7 +13,7 @@ import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.DataPointInterface
 import com.jjoe64.graphview.series.LineGraphSeries
-import java.lang.Math.sqrt
+import kotlin.math.sqrt
 import java.util.*
 
 
@@ -22,7 +22,7 @@ import java.util.*
 class MainActivity :  AppCompatActivity(), SensorEventListener {
   private var mSensorManager : SensorManager ?= null
   private var mAccelerometer : Sensor ?= null
-    var sensorFilteredList = mutableListOf(Pair(0.0, Calendar.getInstance().time))
+    var sensorFilteredList = mutableListOf(Pair(0.0F, Calendar.getInstance().time))
     var isPeak : Boolean = false
     var stepCount = mutableListOf(Calendar.getInstance().time)
     var mSeries2 = LineGraphSeries<DataPointInterface>()
@@ -71,9 +71,9 @@ class MainActivity :  AppCompatActivity(), SensorEventListener {
           //Get time for timestamp
           val currentTime: Date = Calendar.getInstance().time
           // Calc magnitude from 3 axis
-          var mag : Double = calcMagnitude(event.values[0].toDouble(), event.values[1].toDouble(), event.values[2].toDouble()) - 9.81
+          val mag : Float = calcMagnitude(event.values[0], event.values[1], event.values[2]) - 9.81F
           // Filter magnitude
-          var filteredVal : Double = filter(sensorFilteredList.last().first, mag)
+          val filteredVal : Float = filter(sensorFilteredList.last().first, mag)
           // add result to list
           sensorFilteredList.add(Pair(filteredVal , currentTime))
           //Keep list clean
@@ -137,17 +137,17 @@ class MainActivity :  AppCompatActivity(), SensorEventListener {
 }
 
 
-fun calcMagnitude(x : Double, y : Double, z: Double) : Double {
+fun calcMagnitude(x : Float, y : Float, z: Float) : Float {
     //Calculates the magnitude of a x,y & z vector
-    var Magnitude : Double = sqrt (x * x + y * y + z * z)
+    val Magnitude : Float = sqrt (x * x + y * y + z * z)
     return Magnitude
 }
 
-fun filter(m_old: Double , m_new : Double) : Double {
+fun filter(m_old: Float , m_new : Float) : Float {
     //Low Pass filter
-    val FACTOR = 0.2
-    
-    var ReturnVal : Double = (1-FACTOR) * m_old + FACTOR * m_new
+    val FACTOR : Float = 0.2F
+
+    val ReturnVal : Float = (1-FACTOR) * m_old + FACTOR * m_new
     return ReturnVal
 }
 
