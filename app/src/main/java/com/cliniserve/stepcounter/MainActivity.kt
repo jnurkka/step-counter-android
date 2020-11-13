@@ -1,22 +1,31 @@
 package com.cliniserve.stepcounter
 
-import android.os.Bundle;
-import android.app.Activity;
-import android.util.Log;
-import android.content.Context;
+import android.app.Activity
+import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.util.Log
+import android.view.View
+import android.widget.EditText
 import java.lang.Math.sqrt
+import java.util.*
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import android.widget.TextView
+import com.jjoe64.graphview.GraphView
 
-class MainActivity : Activity(), SensorEventListener {
+
+class MainActivity :  AppCompatActivity(), SensorEventListener {
   private var mSensorManager : SensorManager ?= null
   private var mAccelerometer : Sensor ?= null
-    val sensorFilteredList = mutableListOf(0.0)
+    val sensorFilteredList = mutableListOf(Pair(0.0, Calendar.getInstance().timeInMillis))
 
   override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
+      setContentView(R.layout.activity_main);
+
       Log.d("StepCounter", "Initiated app")
 
       mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -26,14 +35,26 @@ class MainActivity : Activity(), SensorEventListener {
   override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
   }
 
-  override fun onSensorChanged(event: SensorEvent?) {
+  override fun onSensorChanged(event: SensorEvent?, callback) {
       if (event != null) {
-          Log.d("rawX", event.values[0].toString())
-          var mag : Double = calcMagnitude(event.values[0].toDouble(), event.values[1].toDouble(), event.values[2].toDouble())
-          Log.d("rawMag", mag.toString())
 
-          var filteredVal : Double = filter(sensorFilteredList.last(), mag)
-          sensorFilteredList.add(filteredVal)
+          //Get time for timestamp
+          val currentTime: Long = Calendar.getInstance().timeInMillis
+
+          // Calc magnitude from 3 axis
+          var mag : Double = calcMagnitude(event.values[0].toDouble(), event.values[1].toDouble(), event.values[2].toDouble()) - 9.81
+          // Filter magnitude
+          var filteredVal : Double = filter(sensorFilteredList.last().first, mag)
+          // add result to list
+          sensorFilteredList.add(Pair(filteredVal , currentTime))
+
+          val textView: TextView = findViewById(R.id.textView) as TextView
+          textView.setText(filteredVal.toString())
+
+          val GraphView: GraphView = findViewById(R.id.graph) as GraphView
+
+
+
           Log.d("filteredMag", sensorFilteredList.last().toString())
       }
   }
