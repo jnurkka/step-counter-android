@@ -28,6 +28,9 @@ class MainActivity :  AppCompatActivity(), SensorEventListener {
     var mSeries2 = LineGraphSeries<DataPointInterface>()
     var loopCounter : Int = 0
 
+    val DEALY = 300
+    val TRASHHOLD = 0.5
+
 
   override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
@@ -44,7 +47,7 @@ class MainActivity :  AppCompatActivity(), SensorEventListener {
     fun serachStep()
     {
         // Function to identify single steps
-        if(sensorFilteredList.last().first > 0.5 || sensorFilteredList.last().first < -0.5)
+        if(sensorFilteredList.last().first > TRASHHOLD || sensorFilteredList.last().first < -TRASHHOLD)
         {
             if(isPeak == false)
             {
@@ -56,7 +59,7 @@ class MainActivity :  AppCompatActivity(), SensorEventListener {
                 textView.setText(stepCount.size.toString())
             }
         }
-        else if ((Calendar.getInstance().time.time - stepCount.last().time) > 300)
+        else if ((Calendar.getInstance().time.time - stepCount.last().time) > DEALY)
         {
             isPeak = false
         }
@@ -142,7 +145,9 @@ fun calcMagnitude(x : Double, y : Double, z: Double) : Double {
 
 fun filter(m_old: Double , m_new : Double) : Double {
     //Low Pass filter
-    var ReturnVal : Double = 0.8 * m_old + 0.2 * m_new
+    val FACTOR = 0.2
+    
+    var ReturnVal : Double = (1-FACTOR) * m_old + FACTOR * m_new
     return ReturnVal
 }
 
