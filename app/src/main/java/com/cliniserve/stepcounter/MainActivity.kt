@@ -1,6 +1,7 @@
 package com.cliniserve.stepcounter
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -15,6 +16,7 @@ import com.jjoe64.graphview.series.DataPointInterface
 import com.jjoe64.graphview.series.LineGraphSeries
 import kotlin.math.sqrt
 import java.util.*
+import android.widget.Button
 
 
 
@@ -39,6 +41,15 @@ class MainActivity :  AppCompatActivity(), SensorEventListener {
       Log.d("StepCounter", "Initiated app")
       mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
       mAccelerometer = mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+      requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+      val buttonReset : Button = findViewById(R.id.buttonReset) as Button
+      buttonReset.setOnClickListener {
+          stepCount.clear()
+          stepCount = mutableListOf(Calendar.getInstance().time)
+          val textView: TextView = findViewById(R.id.textView) as TextView
+          textView.setText(stepCount.size.toString())
+      }
   }
 
   override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
