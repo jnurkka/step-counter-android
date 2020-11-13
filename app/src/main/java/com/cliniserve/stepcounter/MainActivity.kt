@@ -8,10 +8,12 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import java.lang.Math.sqrt
 
 class MainActivity : Activity(), SensorEventListener {
   private var mSensorManager : SensorManager ?= null
   private var mAccelerometer : Sensor ?= null
+    val sensorFilteredList = mutableListOf(0.0)
 
   override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
@@ -26,7 +28,13 @@ class MainActivity : Activity(), SensorEventListener {
 
   override fun onSensorChanged(event: SensorEvent?) {
       if (event != null) {
-          Log.d("StepCounter", event.values[0].toString())
+          Log.d("rawX", event.values[0].toString())
+          var mag : Double = calcMagnitude(event.values[0].toDouble(), event.values[1].toDouble(), event.values[2].toDouble())
+          Log.d("rawMag", mag.toString())
+
+          var filteredVal : Double = filter(sensorFilteredList.last(), mag)
+          sensorFilteredList.add(filteredVal)
+          Log.d("filteredMag", sensorFilteredList.last().toString())
       }
   }
 
@@ -57,4 +65,14 @@ class MainActivity : Activity(), SensorEventListener {
     super.onDestroy()
     Log.d("StepCounter", "Destroyed app")
   }
+}
+
+fun calcMagnitude(x : Double, y : Double, z: Double) : Double {
+    var Magnitude : Double = sqrt (x * x + y * y + z * z)
+    return Magnitude
+}
+
+fun filter(m_old: Double , m_new : Double) : Double {
+    var ReturnVal : Double = 0.9 * m_old + 0.1 * m_new
+    return ReturnVal
 }
